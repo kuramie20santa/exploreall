@@ -5,7 +5,12 @@ import { Badge } from "@/components/ui/card";
 import { PostCard } from "@/components/post-card";
 import type { PostWithMeta } from "@/lib/types";
 import { safetyColor, safetyLabel } from "@/lib/utils";
-import { Calendar, Compass, ShieldCheck, Sparkles, AlertTriangle, FileText } from "lucide-react";
+import { Calendar, Compass, ShieldCheck, Sparkles, AlertTriangle, FileText, MapPin } from "lucide-react";
+import { CountryStats } from "@/components/country-stats";
+import { CurrencyWidget } from "@/components/currency-widget";
+import { AirlinesSection } from "@/components/airlines";
+import { getCountryExtras, getFxRates } from "@/lib/country-data";
+import { AIRLINES_BY_COUNTRY } from "@/data/airlines";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +18,7 @@ export default async function CountryPage({ params }: { params: { code: string }
   const supabase = createClient();
   const code = params.code.toUpperCase();
 
-  const [{ data: country }, { data: rating }, { data: cities }, { data: posts }] = await Promise.all([
+  const [{ data: country }, { data: rating }, { data: cities }, { data: posts }, extras, fx] = await Promise.all([
     supabase.from("countries").select("*").eq("code", code).maybeSingle(),
     supabase.from("safety_ratings").select("*").eq("country_code", code).maybeSingle(),
     supabase.from("cities").select("name,is_capital,description").eq("country_code", code).order("is_capital", { ascending: false }).order("name"),
@@ -24,10 +29,13 @@ export default async function CountryPage({ params }: { params: { code: string }
       .eq("country_code", code)
       .order("like_count", { ascending: false })
       .limit(6),
+    getCountryExtras(code),
+    getFxRates(),
   ]);
 
   if (!country) notFound();
   const postsTyped = (posts ?? []) as unknown as PostWithMeta[];
+  const airlines = AIRLINES_BY_COUNTRY[code] ?? [];
 
   const score = rating?.score ?? null;
   const level = rating?.level ?? null;
@@ -87,6 +95,34 @@ export default async function CountryPage({ params }: { params: { code: string }
         <InfoCard icon={<Calendar className="h-4 w-4" />} title="Best time to visit" body={country.best_time_to_visit || "Year-round."} />
         <InfoCard icon={<FileText className="h-4 w-4" />} title="Visa & entry" body={country.visa_notes || "Check your country's foreign affairs office."} />
       </div>
+
+      {/* Live country stats */}
+      {extras ? <CountryStats extras={extras} /> : null}
+
+      {/* Live currency widget */}
+      {extras?.currency_code && fx?.rates ? (
+        <CurrencyWidget
+          localCurrency={extras.currency_code}
+          localName={extras.currency_name}
+          rates={fx.rates}
+          updatedAt={fx.updated_at}
+        />
+      ) : null}
+
+      {/* Airlines */}
+      <AirlinesSection airlines={airlines} countryName={country.name} />
+
+      {/* Map link */}
+      {extras?.maps_url ? (
+        <a
+          href={extras.maps_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 h-10 px-5 rounded-full hairline bg-card hover:bg-muted text-sm font-medium press transition"
+        >
+          <MapPin className="h-4 w-4" /> Open {country.name} on Google Maps
+        </a>
+      ) : null}
 
       <div className="grid lg:grid-cols-2 gap-5">
         <ListCard icon={<Sparkles className="h-4 w-4" />} title="Travel tips" items={country.common_tips ?? []} />

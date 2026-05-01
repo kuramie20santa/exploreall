@@ -10,6 +10,18 @@ import { SupportLink } from "@/components/support-card";
 export const metadata: Metadata = {
   title: "ExploreAll — travel community",
   description: "A clean, premium travel community. Share your trips, discover places, and check country safety.",
+  icons: {
+    icon: [{ url: "/logo.png", type: "image/png" }],
+    apple: "/logo.png",
+  },
+  openGraph: {
+    title: "ExploreAll — travel community",
+    description: "Share your trips, discover places, and check country safety.",
+    url: "https://www.exploreall.eu",
+    siteName: "ExploreAll",
+    images: [{ url: "/logo.png", width: 1080, height: 1080 }],
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

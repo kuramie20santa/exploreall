@@ -5,6 +5,7 @@ import { Nav } from "@/components/nav";
 import { VerifyEmailBanner } from "@/components/verify-email-banner";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { SupportLink } from "@/components/support-card";
 
 export const metadata: Metadata = {
   title: "ExploreAll — travel community",
@@ -19,9 +20,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Nav />
           <VerifyEmailBanner />
           <main className="container py-8 animate-fadeIn">{children}</main>
-          <footer className="container mt-16 mb-12 text-xs text-muted-foreground flex items-center justify-between">
-            <span>ExploreAll</span>
-
+          <footer className="container mt-16 mb-12 text-xs text-muted-foreground flex items-center justify-between gap-4">
+            <span>© {new Date().getFullYear()} ExploreAll</span>
+            <SupportLink />
           </footer>
         </ThemeProvider>
         <Analytics />

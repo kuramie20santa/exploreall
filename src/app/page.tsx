@@ -5,6 +5,7 @@ import type { PostWithMeta } from "@/lib/types";
 import { ArrowRight, Compass, Globe2, ShieldCheck } from "lucide-react";
 import { safetyColor, safetyLabel } from "@/lib/utils";
 import { Badge } from "@/components/ui/card";
+import { SupportCard } from "@/components/support-card";
 
 export const dynamic = "force-dynamic";
 
@@ -82,6 +83,9 @@ export default async function HomePage() {
           </div>
         )}
       </section>
+
+      {/* Support */}
+      <SupportCard />
 
       {/* Popular countries */}
       <section>

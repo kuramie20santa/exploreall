@@ -1,0 +1,28 @@
+import type { Metadata } from "next";
+import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Nav } from "@/components/nav";
+import { VerifyEmailBanner } from "@/components/verify-email-banner";
+
+export const metadata: Metadata = {
+  title: "ExploreAll — travel community",
+  description: "A clean, premium travel community. Share your trips, discover places, and check country safety.",
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className="min-h-screen antialiased pb-24 md:pb-0">
+        <ThemeProvider>
+          <Nav />
+          <VerifyEmailBanner />
+          <main className="container py-8 animate-fadeIn">{children}</main>
+          <footer className="container mt-16 mb-12 text-xs text-muted-foreground flex items-center justify-between">
+            <span>ExploreAll</span>
+          
+          </footer>
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}

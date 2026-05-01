@@ -3,6 +3,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Nav } from "@/components/nav";
 import { VerifyEmailBanner } from "@/components/verify-email-banner";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   title: "ExploreAll — travel community",
@@ -19,9 +21,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="container py-8 animate-fadeIn">{children}</main>
           <footer className="container mt-16 mb-12 text-xs text-muted-foreground flex items-center justify-between">
             <span>ExploreAll</span>
-          
+
           </footer>
         </ThemeProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

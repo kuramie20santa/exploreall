@@ -156,8 +156,15 @@ create table if not exists public.saves (
   primary key (user_id, post_id)
 );
 
--- Counter triggers
-create or replace function public.bump_like_count() returns trigger language plpgsql as $$
+-- Counter triggers — SECURITY DEFINER so they bypass RLS on posts.
+-- Without security definer, when user A likes user B's post, the trigger's
+-- UPDATE on posts is blocked by the posts-update RLS policy (author-only).
+create or replace function public.bump_like_count()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
 begin
   if tg_op = 'INSERT' then
     update public.posts set like_count = like_count + 1 where id = new.post_id;
@@ -171,7 +178,12 @@ create trigger likes_count_trg
 after insert or delete on public.likes
 for each row execute function public.bump_like_count();
 
-create or replace function public.bump_comment_count() returns trigger language plpgsql as $$
+create or replace function public.bump_comment_count()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
 begin
   if tg_op = 'INSERT' then
     update public.posts set comment_count = comment_count + 1 where id = new.post_id;

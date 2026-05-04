@@ -3,9 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { PostCard } from "@/components/post-card";
 import type { PostWithMeta } from "@/lib/types";
 import { ArrowRight, Compass, Globe2, ShieldCheck } from "lucide-react";
-import { safetyColor, safetyLabel } from "@/lib/utils";
-import { Badge } from "@/components/ui/card";
 import { SupportCard } from "@/components/support-card";
+import { CountryHoverCard } from "@/components/country-hover-card";
+import { getCapitalImages } from "@/lib/capital-images";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +26,12 @@ export default async function HomePage() {
 
   const ratingByCode = new Map((ratings ?? []).map((r) => [r.country_code, r]));
   const postsTyped = (posts ?? []) as unknown as PostWithMeta[];
+
+  // Pre-fetch capital images for the popular-countries grid (8 cards) so the
+  // hover effect is instant. Cached on the server for 24h.
+  const capitalImages = await getCapitalImages(
+    (countries ?? []).map((c) => ({ code: c.code, capital: c.capital, name: c.name }))
+  );
 
   return (
     <div className="space-y-16">
@@ -91,27 +97,18 @@ export default async function HomePage() {
       <section>
         <SectionHeader title="Popular countries" href="/explore" cta="Explore all" />
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 stagger">
-          {(countries ?? []).map((c) => {
-            const r = ratingByCode.get(c.code);
-            return (
-              <Link
-                key={c.code}
-                href={`/country/${c.code}`}
-                className="group rounded-3xl bg-card hairline shadow-soft p-5 lift hover:shadow-glow press"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-3xl">{c.flag_emoji}</span>
-                  {r ? (
-                    <Badge className={safetyColor(r.level)}>
-                      {r.score} · {safetyLabel(r.level)}
-                    </Badge>
-                  ) : null}
-                </div>
-                <h3 className="mt-4 font-display text-xl font-semibold tracking-tight">{c.name}</h3>
-                <p className="text-sm text-muted-foreground">{c.capital}</p>
-              </Link>
-            );
-          })}
+          {(countries ?? []).map((c) => (
+            <CountryHoverCard
+              key={c.code}
+              href={`/country/${c.code}`}
+              flag={c.flag_emoji}
+              name={c.name}
+              capital={c.capital}
+              rating={ratingByCode.get(c.code) ?? null}
+              initialImage={capitalImages.get(c.code) ?? null}
+              showContinent={false}
+            />
+          ))}
         </div>
       </section>
     </div>

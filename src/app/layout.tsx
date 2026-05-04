@@ -11,8 +11,11 @@ export const metadata: Metadata = {
   title: "ExploreAll — travel community",
   description: "A clean, premium travel community. Share your trips, discover places, and check country safety.",
   icons: {
-    icon: [{ url: "/logo.png", type: "image/png" }],
-    apple: "/logo.png",
+    icon: [
+      { url: "/logo-dark.png", type: "image/png", media: "(prefers-color-scheme: light)" },
+      { url: "/logo.png", type: "image/png", media: "(prefers-color-scheme: dark)" },
+    ],
+    apple: "/logo-dark.png",
   },
   openGraph: {
     title: "ExploreAll — travel community",

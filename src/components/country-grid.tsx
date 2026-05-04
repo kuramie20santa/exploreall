@@ -1,10 +1,8 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { Search } from "lucide-react";
-import { Badge } from "@/components/ui/card";
-import { safetyColor } from "@/lib/utils";
+import { CountryHoverCard } from "./country-hover-card";
 
 type Country = { code: string; name: string; flag_emoji: string | null; capital: string | null; continent: string | null };
 type Rating = { country_code: string; score: number; level: string };
@@ -65,23 +63,18 @@ export function CountryGrid({ countries, ratings, defaultQuery = "" }: { countri
         <p className="text-muted-foreground text-sm py-8 text-center animate-fadeIn">No countries match.</p>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 stagger">
-          {filtered.map((c) => {
-            const r = ratingByCode.get(c.code);
-            return (
-              <Link
-                key={c.code}
-                href={`/country/${c.code}`}
-                className="rounded-2xl bg-card hairline p-4 hover:bg-muted transition flex items-center gap-3 lift press"
-              >
-                <span className="text-2xl">{c.flag_emoji}</span>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate">{c.name}</p>
-                  <p className="text-xs text-muted-foreground truncate">{c.capital ?? "—"} · {c.continent ?? "—"}</p>
-                </div>
-                {r ? <Badge className={safetyColor(r.level)}>{r.score}</Badge> : null}
-              </Link>
-            );
-          })}
+          {filtered.map((c) => (
+            <CountryHoverCard
+              key={c.code}
+              href={`/country/${c.code}`}
+              flag={c.flag_emoji}
+              name={c.name}
+              capital={c.capital}
+              continent={c.continent}
+              rating={ratingByCode.get(c.code) ?? null}
+              layout="row"
+            />
+          ))}
         </div>
       )}
     </div>

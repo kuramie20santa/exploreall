@@ -24,14 +24,24 @@ export async function Nav() {
       {/* Desktop top bar — hidden on mobile */}
       <header className="hidden md:block sticky top-0 z-40 glass border-b border-border/60">
         <div className="container flex h-14 items-center gap-4">
-          <Link href="/" className="flex items-center" aria-label="ExploreAll home">
+          <Link href="/" className="flex items-center shrink-0" aria-label="ExploreAll home">
+            {/* Light-mode logo (dark text) */}
+            <Image
+              src="/logo-dark.png"
+              alt="ExploreAll"
+              width={891}
+              height={100}
+              priority
+              className="block dark:hidden h-7 w-auto object-contain"
+            />
+            {/* Dark-mode logo (white text) */}
             <Image
               src="/logo.png"
               alt="ExploreAll"
-              width={140}
-              height={32}
+              width={891}
+              height={100}
               priority
-              className="h-8 w-auto object-contain"
+              className="hidden dark:block h-7 w-auto object-contain"
             />
           </Link>
 

@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/card";
-import { safetyColor, safetyLabel } from "@/lib/utils";
 import { PostCard } from "@/components/post-card";
 import type { PostWithMeta } from "@/lib/types";
 import { CountryGrid } from "@/components/country-grid";
+import { CountryHoverCard } from "@/components/country-hover-card";
+import { getCapitalImages } from "@/lib/capital-images";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +34,9 @@ export default async function ExplorePage({ searchParams }: { searchParams: { q?
   }
 
   const trending = (countries ?? []).slice(0, 6);
+  const trendingImages = await getCapitalImages(
+    trending.map((c) => ({ code: c.code, capital: c.capital, name: c.name }))
+  );
 
   return (
     <div className="space-y-12">
@@ -47,19 +51,18 @@ export default async function ExplorePage({ searchParams }: { searchParams: { q?
         <section>
           <h2 className="font-display text-xl font-semibold tracking-tight mb-3">Trending destinations</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 stagger">
-            {trending.map((c) => {
-              const r = ratingByCode.get(c.code);
-              return (
-                <Link key={c.code} href={`/country/${c.code}`} className="rounded-3xl bg-card hairline shadow-soft p-5 lift hover:shadow-glow press">
-                  <div className="flex items-center justify-between">
-                    <span className="text-3xl">{c.flag_emoji}</span>
-                    {r ? <Badge className={safetyColor(r.level)}>{r.score} · {safetyLabel(r.level)}</Badge> : null}
-                  </div>
-                  <h3 className="mt-3 font-display text-xl font-semibold tracking-tight">{c.name}</h3>
-                  <p className="text-sm text-muted-foreground">{c.capital} · {c.continent}</p>
-                </Link>
-              );
-            })}
+            {trending.map((c) => (
+              <CountryHoverCard
+                key={c.code}
+                href={`/country/${c.code}`}
+                flag={c.flag_emoji}
+                name={c.name}
+                capital={c.capital}
+                continent={c.continent}
+                rating={ratingByCode.get(c.code) ?? null}
+                initialImage={trendingImages.get(c.code) ?? null}
+              />
+            ))}
           </div>
         </section>
       ) : null}

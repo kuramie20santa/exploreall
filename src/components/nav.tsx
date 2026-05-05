@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Compass, Globe2, Home, PenSquare, User, Bookmark, LogIn } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { createClient } from "@/lib/supabase/server";
@@ -24,25 +23,12 @@ export async function Nav() {
       {/* Desktop top bar — hidden on mobile */}
       <header className="hidden md:block sticky top-0 z-40 glass border-b border-border/60">
         <div className="container flex h-14 items-center gap-4">
-          <Link href="/" className="flex items-center shrink-0" aria-label="ExploreAll home">
-            {/* Light-mode logo (dark text) */}
-            <Image
-              src="/logo-dark.png"
-              alt="ExploreAll"
-              width={891}
-              height={100}
-              priority
-              className="block dark:hidden h-7 w-auto object-contain"
-            />
-            {/* Dark-mode logo (white text) */}
-            <Image
-              src="/logo.png"
-              alt="ExploreAll"
-              width={891}
-              height={100}
-              priority
-              className="hidden dark:block h-7 w-auto object-contain"
-            />
+          <Link
+            href="/"
+            className="flex items-center font-display text-[17px] font-semibold tracking-tight shrink-0"
+            aria-label="ExploreAll home"
+          >
+            ExploreAll<span className="text-rose-500">.eu</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-1 ml-2">

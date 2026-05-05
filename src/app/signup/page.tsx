@@ -12,7 +12,7 @@ export default function SignupPage() {
         <p className="mt-1 text-center text-muted-foreground text-sm">Free, takes a few seconds.</p>
 
         <div className="mt-8">
-          <SocialAuthButtons />
+          <SocialAuthButtons enableApple={false} />
         </div>
 
         <div className="mt-2">

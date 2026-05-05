@@ -12,7 +12,7 @@ export default function LoginPage({ searchParams }: { searchParams: { next?: str
         <p className="mt-1 text-center text-muted-foreground text-sm">Sign in to share trips and save places.</p>
 
         <div className="mt-8">
-          <SocialAuthButtons next={searchParams.next} />
+          <SocialAuthButtons next={searchParams.next} enableApple={false} />
         </div>
 
         <div className="mt-2">

@@ -154,7 +154,7 @@ export function SignupForm() {
 
       <Field
         label="Password"
-        hint="At least 10 characters, with letters and numbers."
+        hint="At least 8 characters."
         error={errors.password}
       >
         <Input
@@ -163,7 +163,7 @@ export function SignupForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          minLength={10}
+          minLength={8}
         />
       </Field>
 

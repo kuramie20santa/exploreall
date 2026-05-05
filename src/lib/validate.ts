@@ -118,12 +118,9 @@ export function validateUsername(raw: string): ValidationError | null {
 
 export function validatePassword(raw: string): ValidationError | null {
   if (!raw) return "Password is required.";
-  if (raw.length < 10) return "Password must be at least 10 characters.";
+  if (raw.length < 8) return "Password must be at least 8 characters.";
   if (raw.length > 128) return "Password is too long.";
-  const checks = [/[a-z]/, /[A-Z]/, /[0-9]/];
-  const passed = checks.filter((re) => re.test(raw)).length;
-  if (passed < 2) return "Password must mix letters and numbers.";
-  // Block the obvious common ones.
+  // Block the obvious common ones — protection that doesn't cost UX.
   const COMMON = new Set([
     "password", "password1", "password123", "qwerty", "qwerty123",
     "11111111", "12345678", "123456789", "1234567890", "abc123456",

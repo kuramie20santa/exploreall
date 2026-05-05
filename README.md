@@ -95,6 +95,28 @@ Triggers:
 
 For higher-traffic sites also enable: Supabase **Auth → Rate limits** (default 30 signups/hour/IP), Cloudflare Turnstile / hCaptcha (drop-in via Supabase), and `auth.users` cleanup of `email_confirmed_at IS NULL` rows older than 7 days.
 
+### Social sign-in (Google + Apple)
+
+The signup and login pages already render "Continue with Google" and "Continue with Apple" buttons via [src/components/social-auth-buttons.tsx](src/components/social-auth-buttons.tsx). They start working as soon as the providers are configured in Supabase. Until then, clicking either shows a friendly error.
+
+#### Google (free, ~10 minutes)
+1. Go to <https://console.cloud.google.com/apis/credentials> → **Create Credentials → OAuth client ID**.
+2. Application type: **Web application**.
+3. Authorized redirect URIs: `https://gckccrwcbtkoybnxbjwc.supabase.co/auth/v1/callback`
+4. Authorized JavaScript origins: `https://www.exploreall.eu` and `http://localhost:3000`.
+5. Copy the **Client ID** and **Client Secret**.
+6. Supabase Dashboard → Authentication → Providers → Google → toggle **Enable**, paste both, save.
+7. Done. Click "Continue with Google" on the live site and the flow works.
+
+#### Apple (paid, requires Apple Developer Program — $99/year)
+Web-based Sign in with Apple requires a Service ID + an Apple Sign-In Key, both managed at <https://developer.apple.com>. Supabase has a step-by-step guide:
+<https://supabase.com/docs/guides/auth/social-login/auth-apple>
+
+If you don't want to pay, set `enableApple={false}` on the SocialAuthButtons calls in `src/app/login/page.tsx` and `src/app/signup/page.tsx` to hide the button until you're ready.
+
+#### Adding more providers later
+GitHub, Discord, Spotify, Twitter, LinkedIn, Slack — all supported by Supabase Auth. Same flow: register the OAuth app on the provider, paste the Client ID + Secret into Supabase, and add a button to `social-auth-buttons.tsx`.
+
 ### b) Local
 ```bash
 cp .env.local.example .env.local

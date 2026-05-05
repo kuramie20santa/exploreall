@@ -5,13 +5,21 @@
 -- Run this once in the Supabase SQL editor.
 --
 -- Idempotent:
+--   * countries:       any code referenced below that's missing from the
+--                      countries table is inserted first (handles XK Kosovo
+--                      and other user-assigned codes).
 --   * safety_ratings:  insert ... on conflict do nothing (won't overwrite
 --                      richer rows like JP/IT/TH already in the table).
---   * countries:       updates the trip-info columns ONLY where they are
---                      currently NULL or empty. Existing curated entries
---                      stay untouched.
+--   * countries trip-info columns are updated ONLY where currently NULL or
+--                      empty. Existing curated entries stay untouched.
 -- ===========================================================================
 
+
+-- =====================  EXTRA / NON-ISO COUNTRIES  =====================
+-- Inserted first so the safety_ratings FK below doesn't fail.
+insert into public.countries (code, name, capital, continent, flag_emoji) values
+  ('XK', 'Kosovo', 'Pristina', 'Europe', '🇽🇰')
+on conflict (code) do nothing;
 
 -- =====================  SAFETY RATINGS  =====================
 insert into public.safety_ratings (country_code, score, level, summary) values

@@ -412,13 +412,22 @@ LEAD_HEADER = """-- ============================================================
 -- Run this once in the Supabase SQL editor.
 --
 -- Idempotent:
+--   * countries:       any code referenced below that's missing from the
+--                      countries table is inserted first (handles XK Kosovo
+--                      and other user-assigned codes).
 --   * safety_ratings:  insert ... on conflict do nothing (won't overwrite
 --                      richer rows like JP/IT/TH already in the table).
---   * countries:       updates the trip-info columns ONLY where they are
---                      currently NULL or empty. Existing curated entries
---                      stay untouched.
+--   * countries trip-info columns are updated ONLY where currently NULL or
+--                      empty. Existing curated entries stay untouched.
 -- ===========================================================================
 """
+
+# Countries that may not be in the standard ISO 3166-1 list. Inserted first
+# so the safety_ratings FK doesn't fail.
+EXTRA_COUNTRIES = [
+    # (code, name, capital, continent, flag_emoji)
+    ('XK', 'Kosovo', 'Pristina', 'Europe', '🇽🇰'),
+]
 
 def sql_str(v):
     if v is None: return 'null'
@@ -456,6 +465,15 @@ def build_country_updates():
 def main():
     out = []
     out.append(LEAD_HEADER)
+    out.append("")
+    out.append("-- =====================  EXTRA / NON-ISO COUNTRIES  =====================")
+    out.append("-- Inserted first so the safety_ratings FK below doesn't fail.")
+    out.append("insert into public.countries (code, name, capital, continent, flag_emoji) values")
+    extra_rows = []
+    for code, name, capital, continent, flag in EXTRA_COUNTRIES:
+        extra_rows.append(f"  ({sql_str(code)}, {sql_str(name)}, {sql_str(capital)}, {sql_str(continent)}, {sql_str(flag)})")
+    out.append(",\n".join(extra_rows))
+    out.append("on conflict (code) do nothing;")
     out.append("")
     out.append("-- =====================  SAFETY RATINGS  =====================")
     out.append("insert into public.safety_ratings (country_code, score, level, summary) values")

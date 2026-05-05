@@ -64,7 +64,8 @@ create table if not exists public.profiles (
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
-security definer set search_path = public
+security definer
+set search_path = ''
 as $$
 declare
   base text;
@@ -159,11 +160,13 @@ create table if not exists public.saves (
 -- Counter triggers — SECURITY DEFINER so they bypass RLS on posts.
 -- Without security definer, when user A likes user B's post, the trigger's
 -- UPDATE on posts is blocked by the posts-update RLS policy (author-only).
+-- search_path is set to '' (empty) so the function only resolves
+-- schema-qualified names — defends against search-path hijacking.
 create or replace function public.bump_like_count()
 returns trigger
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $$
 begin
   if tg_op = 'INSERT' then
@@ -182,7 +185,7 @@ create or replace function public.bump_comment_count()
 returns trigger
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $$
 begin
   if tg_op = 'INSERT' then
@@ -196,6 +199,11 @@ drop trigger if exists comments_count_trg on public.comments;
 create trigger comments_count_trg
 after insert or delete on public.comments
 for each row execute function public.bump_comment_count();
+
+-- Lock down EXECUTE so functions can only fire from triggers, not via API.
+revoke execute on function public.bump_like_count()    from public, anon, authenticated;
+revoke execute on function public.bump_comment_count() from public, anon, authenticated;
+revoke execute on function public.handle_new_user()    from public, anon, authenticated;
 
 -- =====================================================================
 -- REPORTS (moderation)
@@ -335,9 +343,11 @@ insert into storage.buckets (id, name, public)
   values ('post-images', 'post-images', true)
   on conflict (id) do nothing;
 
+-- NOTE: We deliberately do NOT create a public SELECT policy on storage.objects
+-- for these buckets. Public direct URLs still work (bucket has public=true);
+-- omitting the SELECT policy prevents anyone from listing all files via the
+-- Storage API.
 drop policy if exists "avatars read" on storage.objects;
-create policy "avatars read" on storage.objects
-  for select using (bucket_id = 'avatars');
 drop policy if exists "avatars write own" on storage.objects;
 create policy "avatars write own" on storage.objects
   for insert with check (
@@ -356,8 +366,6 @@ create policy "avatars delete own" on storage.objects
   );
 
 drop policy if exists "post-images read" on storage.objects;
-create policy "post-images read" on storage.objects
-  for select using (bucket_id = 'post-images');
 drop policy if exists "post-images write own" on storage.objects;
 create policy "post-images write own" on storage.objects
   for insert with check (

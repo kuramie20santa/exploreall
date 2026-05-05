@@ -80,6 +80,8 @@ Triggers:
 3. **Run [`supabase/all-countries.sql`](supabase/all-countries.sql)** in a new SQL query.
    - Adds the remaining 230+ ISO 3166-1 countries and territories (basic info only — flag, capital, continent). Idempotent: leaves your seeded rich rows untouched.
 4. **Run [`supabase/harden.sql`](supabase/harden.sql)** — adds RLS policies that require `email_verified` for any write (posts, comments, likes, saves, uploads). This is what stops bot signups from polluting your forum.
+4b. **Run [`supabase/harden-warnings.sql`](supabase/harden-warnings.sql)** — clears Supabase Security Advisor warnings (function search_path, public EXECUTE on SECURITY DEFINER triggers, public bucket listing). Idempotent. Optional but recommended.
+4c. **Dashboard toggle** — Authentication → Providers → Email → enable **"Leaked password protection"** (uses HaveIBeenPwned to refuse compromised passwords at signup). One click, no SQL.
 5. **Authentication → Providers → Email**: turn **Confirm email = ON**. With `harden.sql` applied, unconfirmed users can browse but cannot post, like, or upload anything until they click the link in their inbox.
 6. **Authentication → URL Configuration**: add `http://localhost:3000` (dev) and your production URL to the allowed redirect URLs.
 7. **Authentication → Email Templates**: replace `{{ .SiteURL }}` references with your site URL if needed.

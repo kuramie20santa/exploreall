@@ -23,15 +23,7 @@ export async function Nav() {
       {/* Desktop top bar — hidden on mobile */}
       <header className="hidden md:block sticky top-0 z-40 glass border-b border-border/60">
         <div className="container flex h-14 items-center gap-4">
-          <Link
-            href="/"
-            className="flex items-center font-display text-[17px] font-semibold tracking-tight shrink-0"
-            aria-label="ExploreAll home"
-          >
-            ExploreAll<span className="text-rose-500">.eu</span>
-          </Link>
-
-          <nav className="hidden md:flex items-center gap-1 ml-2">
+          <nav className="flex items-center gap-1">
             <NavLink href="/" icon={<Home className="h-4 w-4" />}>Home</NavLink>
             <NavLink href="/explore" icon={<Compass className="h-4 w-4" />}>Explore</NavLink>
             <NavLink href="/forum" icon={<Globe2 className="h-4 w-4" />}>Forum</NavLink>

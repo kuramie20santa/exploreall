@@ -3,8 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { PostCard } from "@/components/post-card";
 import type { PostWithMeta } from "@/lib/types";
 import {
-  ArrowRight, Compass, Globe2, ShieldCheck, Sparkles,
-  PenSquare, MapPin, Search, Heart, BadgeCheck,
+  ArrowRight, Compass, Globe2, ShieldCheck,
+  PenSquare, MapPin, Search, BadgeCheck,
 } from "lucide-react";
 import { SupportCard } from "@/components/support-card";
 import { CountryHoverCard } from "@/components/country-hover-card";
@@ -62,12 +62,7 @@ export default async function HomePage() {
         <div className="absolute top-1/2 -right-20 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl animate-float [animation-delay:-6s]" aria-hidden />
 
         <div className="relative px-6 sm:px-10 py-20 sm:py-32 max-w-4xl mx-auto text-center">
-          <span className="inline-flex items-center gap-2 text-xs font-medium rounded-full bg-muted px-3 py-1 ring-1 ring-inset ring-black/5 dark:ring-white/10 animate-fadeIn">
-            <Sparkles className="h-3 w-3 text-rose-500" />
-            <span>The travel forum that doesn't suck</span>
-          </span>
-
-          <h1 className="mt-6 font-display text-5xl sm:text-7xl font-semibold tracking-tight leading-[1.02] animate-slideUp">
+          <h1 className="font-display text-5xl sm:text-7xl font-semibold tracking-tight leading-[1.02] animate-slideUp">
             Real trips.<br />
             <span className="bg-gradient-to-br from-rose-500 via-rose-400 to-amber-400 bg-clip-text text-transparent">
               Real travelers.
@@ -122,11 +117,10 @@ export default async function HomePage() {
       </section>
 
       {/* ========= STATS BAR ========= */}
-      <section className="grid grid-cols-2 sm:grid-cols-4 gap-4 stagger">
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 stagger">
         <Stat value={`${countriesTotal ?? 250}+`} label="Countries covered" icon={<Globe2 className="h-4 w-4" />} />
         <Stat value={`${postsTotal ?? 0}`} label="Trip stories" icon={<PenSquare className="h-4 w-4" />} />
         <Stat value="0" label="Ads or trackers" icon={<BadgeCheck className="h-4 w-4" />} accent="emerald" />
-        <Stat value="100%" label="Free, forever" icon={<Heart className="h-4 w-4" />} accent="rose" />
       </section>
 
       {/* ========= FEATURES ========= */}
